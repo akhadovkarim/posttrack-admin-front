@@ -29,10 +29,7 @@ export const AuthProvider = ({ children }) => {
 
         if (!res.ok) throw new Error("Неверный логин или пароль");
 
-        const data = await res.json();
-        localStorage.setItem("token", data.access_token);
-        setToken(data.access_token);
-        setUser({ username });
+        setUser({ username }); // просто ставим user, без токена
     };
 
     const logout = () => {
