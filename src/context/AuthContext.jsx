@@ -23,12 +23,15 @@ export const AuthProvider = ({ children }) => {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
             },
-            credentials: "include", // ВАЖНО!
+            credentials: "include",
             body: formData,
         });
 
         if (!res.ok) throw new Error("Неверный логин или пароль");
 
+        const data = await res.json();
+        localStorage.setItem("token", data.access_token);
+        setToken(data.access_token);
         setUser({ username });
     };
 
