@@ -6,6 +6,7 @@ import Payments from "./pages/Payments";
 import Expenses from "./pages/Expenses";
 import LoginPage from "./pages/LoginPage";
 import PrivateRoute from "./components/PrivateRoute";
+import LeadRequests from "./pages/LeadRequests.jsx";
 
 export default function AppRouter() {
     return (
@@ -52,7 +53,21 @@ export default function AppRouter() {
                         </PrivateRoute>
                     }
                 />
+
+
+                <Route
+                    path="/lead-requests"
+                    element={
+                        <PrivateRoute>
+                            <Layout>
+                                <LeadRequests />
+                            </Layout>
+                        </PrivateRoute>
+                    }
+                />
+
             </Routes>
+
         </Router>
     );
 }

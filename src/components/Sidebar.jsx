@@ -6,6 +6,7 @@ const links = [
     { to: "/users", label: "Users" },
     { to: "/payments", label: "Payments" },
     { to: "/expenses", label: "Expenses" },
+    { to: "/lead-requests", label: "Заявки" }
 
 ];
 

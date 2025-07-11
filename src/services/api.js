@@ -1,71 +1,76 @@
+import { API_BASE_URL } from "../config";
+
+// Универсальный fetch с авторизацией и JSON-обработкой
 export const apiFetch = async (url, options = {}) => {
-    const res = await fetch(url, {
+    const res = await fetch(`${API_BASE_URL}${url}`, {
         ...options,
         headers: {
             "Content-Type": "application/json",
             ...(options.headers || {}),
         },
-        credentials: "include", // ВАЖНО: отправка cookie
+        credentials: "include", // важно для cookie
     });
 
     if (res.status === 401) throw new Error("Unauthorized");
-    return res.json();
+
+    // Если пустой ответ (204 No Content)
+    if (res.status === 204) return null;
+
+    const data = await res.json();
+    if (!res.ok) {
+        throw new Error(data?.detail || "Ошибка при запросе");
+    }
+
+    return data;
 };
 
-export const getClients = async () => {
-    return await apiFetch("https://adminer.api.posttrack.app/api/clients");
-};
+// ========== Clients ==========
+export const getClients = () => apiFetch("/clients");
 
-export const fetchDashboardSummary = async (start, end) => {
-    const url = `https://adminer.api.posttrack.app/api/dashboard/summary?start_date=${start}&end_date=${end}`;
-    return await apiFetch(url);
-};
-
-export const createClient = async (clientData) => {
-    return await apiFetch("https://adminer.api.posttrack.app/api/clients", {
+export const createClient = (clientData) =>
+    apiFetch("/clients", {
         method: "POST",
         body: JSON.stringify(clientData),
     });
-};
 
-export const updateClient = async (id, clientData) => {
-    return await apiFetch(`https://adminer.api.posttrack.app/api/clients/${id}`, {
+export const updateClient = (id, clientData) =>
+    apiFetch(`/clients/${id}`, {
         method: "PATCH",
         body: JSON.stringify(clientData),
     });
-};
 
-export const getPayments = async () => {
-    return await apiFetch("https://adminer.api.posttrack.app/api/payments");
-};
+// ========== Dashboard ==========
+export const fetchDashboardSummary = (start, end) =>
+    apiFetch(`/dashboard/summary?start_date=${start}&end_date=${end}`);
 
-export const createPayment = async (data) => {
-    return await apiFetch("https://adminer.api.posttrack.app/api/payments", {
+// ========== Payments ==========
+export const getPayments = () => apiFetch("/payments");
+
+export const createPayment = (data) =>
+    apiFetch("/payments", {
         method: "POST",
         body: JSON.stringify(data),
     });
-};
 
-export const updatePayment = async (id, data) => {
-    return await apiFetch(`https://adminer.api.posttrack.app/api/payments/${id}`, {
+export const updatePayment = (id, data) =>
+    apiFetch(`/payments/${id}`, {
         method: "PUT",
         body: JSON.stringify(data),
     });
-};
 
-export const getExpenses = async () => {
-    return await apiFetch("https://adminer.api.posttrack.app/api/expenses");
-};
+// ========== Expenses ==========
+export const getExpenses = () => apiFetch("/expenses");
 
-export const createExpense = async (expenseData) => {
-    return await apiFetch("https://adminer.api.posttrack.app/api/expenses", {
+export const createExpense = (expenseData) =>
+    apiFetch("/expenses", {
         method: "POST",
         body: JSON.stringify(expenseData),
     });
-};
 
-export const deleteExpense = async (id) => {
-    return await apiFetch(`https://adminer.api.posttrack.app/api/expenses/${id}`, {
+export const deleteExpense = (id) =>
+    apiFetch(`/expenses/${id}`, {
         method: "DELETE",
     });
-};
+
+// ========== Lead Requests ==========
+export const getLeadRequests = () => apiFetch("/lead-requests");
