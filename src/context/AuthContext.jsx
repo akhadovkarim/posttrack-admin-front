@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
         formData.append("username", username);
         formData.append("password", password);
 
-        const res = await fetch("https://api.adminer.posttrack.app/api/auth/login", {
+        const res = await fetch("https://adminer.api.posttrack.app/api/auth/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
