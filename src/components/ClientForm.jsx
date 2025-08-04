@@ -1,21 +1,44 @@
 import React, { useState, useEffect } from "react";
+import { getTariffs } from "../services/api";
 
 const ClientForm = ({ initialData = null, onSave, onCancel }) => {
+    const [tariffs, setTariffs] = useState([]);
     const [formData, setFormData] = useState({
         id: "",
         company_name: "",
         domain: "",
         contact: "",
-        tariff: "starter",
+        telegram_chat_id: "",
+        tariff: "",
         status: "trial",
         expires_at: "",
+        custom_price: "", // добавлено
     });
+
+    useEffect(() => {
+        const loadTariffs = async () => {
+            try {
+                const data = await getTariffs();
+                setTariffs(data);
+            } catch (e) {
+                console.error("Ошибка загрузки тарифов", e);
+            }
+        };
+        loadTariffs();
+    }, []);
 
     useEffect(() => {
         if (initialData) {
             setFormData({
-                ...initialData,
+                id: initialData.id || "",
+                company_name: initialData.company_name || "",
+                domain: initialData.domain || "",
+                contact: initialData.contact || "",
+                telegram_chat_id: initialData.telegram_chat_id?.toString() || "",
+                tariff: initialData.tariff || "",
+                status: initialData.status || "trial",
                 expires_at: initialData.expires_at?.slice(0, 16) || "",
+                custom_price: initialData.custom_price?.toString() || "", // добавлено
             });
         }
     }, [initialData]);
@@ -27,8 +50,21 @@ const ClientForm = ({ initialData = null, onSave, onCancel }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSave(formData);
+
+        const payload = {
+            ...formData,
+            telegram_chat_id: formData.telegram_chat_id
+                ? parseInt(formData.telegram_chat_id, 10)
+                : null,
+            custom_price: formData.tariff === "custom" && formData.custom_price
+                ? parseFloat(formData.custom_price)
+                : null,
+        };
+
+        onSave(payload);
     };
+
+    const isCustomTariff = formData.tariff === "custom";
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-gray-900 rounded-lg border border-gray-700 text-white">
@@ -81,19 +117,48 @@ const ClientForm = ({ initialData = null, onSave, onCancel }) => {
             </div>
 
             <div>
+                <label className="block text-sm font-medium mb-1">Telegram Chat ID</label>
+                <input
+                    type="text"
+                    name="telegram_chat_id"
+                    value={formData.telegram_chat_id}
+                    onChange={handleChange}
+                    className="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white"
+                />
+            </div>
+
+            <div>
                 <label className="block text-sm font-medium mb-1">Тариф</label>
                 <select
                     name="tariff"
                     value={formData.tariff}
                     onChange={handleChange}
                     className="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white"
+                    required
                 >
-                    <option value="free">Free</option>
-                    <option value="starter">Starter</option>
-                    <option value="team">Team</option>
-                    <option value="custom">Custom</option>
+                    <option value="">Выберите тариф</option>
+                    {tariffs.map((tariff) => (
+                        <option key={tariff.id} value={tariff.id}>
+                            {tariff.name} — {tariff.price || 0}$
+                        </option>
+                    ))}
                 </select>
             </div>
+
+            {isCustomTariff && (
+                <div>
+                    <label className="block text-sm font-medium mb-1">Индивидуальная цена (USD)</label>
+                    <input
+                        type="number"
+                        name="custom_price"
+                        value={formData.custom_price}
+                        onChange={handleChange}
+                        className="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white"
+                        step="0.01"
+                        required
+                    />
+                </div>
+            )}
 
             <div>
                 <label className="block text-sm font-medium mb-1">Статус</label>

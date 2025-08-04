@@ -7,6 +7,7 @@ import Expenses from "./pages/Expenses";
 import LoginPage from "./pages/LoginPage";
 import PrivateRoute from "./components/PrivateRoute";
 import LeadRequests from "./pages/LeadRequests.jsx";
+import PlansPage from "./pages/PlansPage.jsx";
 
 export default function AppRouter() {
     return (
@@ -61,6 +62,17 @@ export default function AppRouter() {
                         <PrivateRoute>
                             <Layout>
                                 <LeadRequests />
+                            </Layout>
+                        </PrivateRoute>
+                    }
+                />
+
+                <Route
+                    path="/plans"
+                    element={
+                        <PrivateRoute>
+                            <Layout>
+                                <PlansPage />
                             </Layout>
                         </PrivateRoute>
                     }

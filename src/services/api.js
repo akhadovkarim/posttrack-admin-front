@@ -72,5 +72,23 @@ export const deleteExpense = (id) =>
         method: "DELETE",
     });
 
-// ========== Lead Requests ==========
 export const getLeadRequests = () => apiFetch("/lead-requests");
+
+export const getTariffs = () => apiFetch("/tariffs");
+
+export const createTariff = (data) =>
+    apiFetch("/tariffs", {
+        method: "POST",
+        body: JSON.stringify(data),
+    });
+
+export const updateTariff = (id, data) =>
+    apiFetch(`/tariffs/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+    });
+
+export const deleteTariff = (id) =>
+    apiFetch(`/tariffs/${id}`, {
+        method: "DELETE",
+    });

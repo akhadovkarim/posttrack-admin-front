@@ -2,12 +2,12 @@ import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
 
 const links = [
-    { to: "/", label: "Dashboard" },
-    { to: "/users", label: "Users" },
-    { to: "/payments", label: "Payments" },
-    { to: "/expenses", label: "Expenses" },
-    { to: "/lead-requests", label: "Заявки" }
-
+    { to: "/", label: "Главная" },
+    { to: "/users", label: "Пользователи" },
+    { to: "/payments", label: "Платежи" },
+    { to: "/expenses", label: "Расходы" },
+    { to: "/lead-requests", label: "Заявки" },
+    { to: "/plans", label: "Тарифы" } // добавлен пункт меню "Тарифы"
 ];
 
 const Sidebar = ({ isOpen, closeSidebar }) => {
@@ -27,9 +27,8 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
                 } md:translate-x-0`}
             >
                 <div>
-                    <div className="flex items-center justify-center h-14 border-b border-gray-700">
-                        <img src={logo} alt="PostTrack Logo" className="h-6 mr-2" />
-                        <span className="text-lg font-semibold text-white">PostTrack</span>
+                    <div className="flex items-center justify-center h-100 border-b border-gray-700">
+                        <img src={logo} alt="PostTrack Logo" className="h-14 mr-2" />
                     </div>
                     <nav className="flex flex-col p-2">
                         {links.map((link) => (
