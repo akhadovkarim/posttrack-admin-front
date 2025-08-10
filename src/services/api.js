@@ -92,3 +92,9 @@ export const deleteTariff = (id) =>
     apiFetch(`/tariffs/${id}`, {
         method: "DELETE",
     });
+
+export const provisionClient = (slug) =>
+    apiFetch(`/clients/${slug}/provision`, { method: "POST" });
+
+export const deprovisionClient = (slug) =>
+    apiFetch(`/clients/${slug}/deprovision`, { method: "POST" });
