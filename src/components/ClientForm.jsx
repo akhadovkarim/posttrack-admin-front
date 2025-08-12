@@ -2,17 +2,8 @@ import React, { useState, useEffect } from "react";
 import { getTariffs } from "../services/api";
 
 const ALLOWED_SIDEPANELS = [
-    "dashboard",
-    "expenses",
-    "reports",
-    "team",
-    "notifications",
-    "cards",
-    "creatives",
-    "chatterfy",
-    "chatterfy_stats",
-    "finance",
-    "stats",
+    "dashboard","expenses","reports","team","notifications",
+    "cards","creatives","chatterfy","chatterfy_stats","finance","stats","integrations","agency"
 ];
 
 const bool = (v) => v === true || v === "true";
