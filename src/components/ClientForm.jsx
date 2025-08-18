@@ -3,7 +3,7 @@ import { getTariffs } from "../services/api";
 
 const ALLOWED_SIDEPANELS = [
     "dashboard","expenses","reports","team","notifications",
-    "cards","creatives","chatterfy","chatterfy_stats","finance","stats","integrations","agency"
+    "cards","creatives","chatterfy","chatterfy_stats","finance","stats","integrations","agency","salary"
 ];
 
 const bool = (v) => v === true || v === "true";
