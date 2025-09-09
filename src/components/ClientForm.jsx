@@ -18,6 +18,7 @@ const ClientForm = ({ initialData = null, onSave, onCancel }) => {
         api_domain: "",
         contact: "",
         telegram_chat_id: "",
+        telegram_bot_token: "",
         tariff: "",
         status: "trial",
         expires_at: "",
@@ -60,6 +61,7 @@ const ClientForm = ({ initialData = null, onSave, onCancel }) => {
                 api_domain: initialData.api_domain || "",
                 contact: initialData.contact || "",
                 telegram_chat_id: initialData.telegram_chat_id?.toString() || "",
+                telegram_bot_token: initialData.telegram_bot_token || "",
                 tariff: initialData.tariff || "",
                 status: initialData.status || "trial",
                 expires_at: initialData.expires_at
@@ -88,7 +90,13 @@ const ClientForm = ({ initialData = null, onSave, onCancel }) => {
                 JSON.stringify(initialData.metrics || { chatterfy: [] }, null, 2)
             );
         } else {
-            setFormData((p) => ({ ...p, id: "", tariff: "", status: "trial" }));
+            setFormData((p) => ({
+                ...p,
+                id: "",
+                tariff: "",
+                status: "trial",
+                telegram_bot_token: "",
+            }));
             setBranding({ logoUrl: "", primary: "#1E88E5", accent: "#00C853" });
             setFeatures({
                 finance: false,
@@ -122,8 +130,7 @@ const ClientForm = ({ initialData = null, onSave, onCancel }) => {
         let metrics;
         try {
             metrics = JSON.parse(metricsText || "{}");
-            if (typeof metrics !== "object" || Array.isArray(metrics))
-                throw new Error();
+            if (typeof metrics !== "object" || Array.isArray(metrics)) throw new Error();
         } catch {
             alert("Поле METRICS должно быть корректным JSON-объектом");
             return;
@@ -135,6 +142,7 @@ const ClientForm = ({ initialData = null, onSave, onCancel }) => {
             telegram_chat_id: formData.telegram_chat_id
                 ? parseInt(formData.telegram_chat_id, 10)
                 : null,
+            telegram_bot_token: (formData.telegram_bot_token || "").trim(),
             custom_price:
                 formData.custom_price !== "" ? parseFloat(formData.custom_price) : null,
             custom_period_days:
@@ -152,7 +160,7 @@ const ClientForm = ({ initialData = null, onSave, onCancel }) => {
                 chatterfy: !!features.chatterfy,
                 brocards: !!features.brocards,
             },
-            sidepanels: sidepanels,
+            sidepanels,
             metrics,
         };
 
@@ -185,7 +193,7 @@ const ClientForm = ({ initialData = null, onSave, onCancel }) => {
                         name="slug"
                         value={formData.slug}
                         onChange={handleChange}
-                        disabled={!!initialData} // нельзя менять при редактировании
+                        disabled={!!initialData}
                         className="w-full p-2 bg-gray-800 border border-gray-700 rounded"
                         required
                     />
@@ -204,7 +212,7 @@ const ClientForm = ({ initialData = null, onSave, onCancel }) => {
                 </div>
 
                 <div>
-                    <label className="block text-sm mb-1">WEB‑домен</label>
+                    <label className="block text-sm mb-1">WEB-домен</label>
                     <input
                         type="text"
                         name="domain"
@@ -217,7 +225,7 @@ const ClientForm = ({ initialData = null, onSave, onCancel }) => {
                 </div>
 
                 <div>
-                    <label className="block text-sm mb-1">API‑домен</label>
+                    <label className="block text-sm mb-1">API-домен</label>
                     <input
                         type="text"
                         name="api_domain"
@@ -248,6 +256,18 @@ const ClientForm = ({ initialData = null, onSave, onCancel }) => {
                         value={formData.telegram_chat_id}
                         onChange={handleChange}
                         className="w-full p-2 bg-gray-800 border border-gray-700 rounded"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm mb-1">Telegram Bot Token</label>
+                    <input
+                        type="text"
+                        name="telegram_bot_token"
+                        value={formData.telegram_bot_token}
+                        onChange={handleChange}
+                        className="w-full p-2 bg-gray-800 border border-gray-700 rounded"
+                        placeholder="123456789:AA...your-bot-token"
                     />
                 </div>
 
