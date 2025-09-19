@@ -8,6 +8,8 @@ import LoginPage from "./pages/LoginPage";
 import PrivateRoute from "./components/PrivateRoute";
 import LeadRequests from "./pages/LeadRequests.jsx";
 import PlansPage from "./pages/PlansPage.jsx";
+import BlogAdmin from "./pages/BlogAdmin.jsx";
+
 
 export default function AppRouter() {
     return (
@@ -77,6 +79,18 @@ export default function AppRouter() {
                         </PrivateRoute>
                     }
                 />
+
+                <Route
+                    path="/blog"
+                    element={
+                        <PrivateRoute>
+                            <Layout>
+                                <BlogAdmin />
+                            </Layout>
+                        </PrivateRoute>
+                    }
+                />
+
 
             </Routes>
 

@@ -98,3 +98,20 @@ export const provisionClient = (slug) =>
 
 export const deprovisionClient = (slug) =>
     apiFetch(`/clients/${slug}/deprovision`, { method: "POST" });
+
+
+export const getBlogPosts = (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiFetch(`/blog${qs ? `?${qs}` : ""}`);
+};
+
+export const getBlogPost = (slug) => apiFetch(`/blog/${slug}`);
+
+export const adminCreatePost = (payload) =>
+    apiFetch(`/blog`, { method: "POST", body: JSON.stringify(payload) });
+
+export const adminUpdatePost = (id, payload) =>
+    apiFetch(`/blog/${id}`, { method: "PUT", body: JSON.stringify(payload) });
+
+export const adminDeletePost = (id) =>
+    apiFetch(`/blog/${id}`, { method: "DELETE" });
