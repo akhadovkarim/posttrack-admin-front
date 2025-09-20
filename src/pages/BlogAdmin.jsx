@@ -37,9 +37,15 @@ export default function BlogAdmin() {
     const [cat, setCat] = useState("");
 
     const load = async () => {
-        const data = await adminListPosts({ limit: 200, offset: 0, q, category: cat }); // можно status: 'draft' и т.п.
+        const data = await adminListPosts({
+            limit: 200,
+            offset: 0,
+            q: q || undefined,              // не шлём пустую строку
+            category: cat || undefined,     // не шлём пустую строку
+        });
         setItems(data.items);
     };
+
     useEffect(() => { load(); }, []);
 
     const filtered = useMemo(() => {

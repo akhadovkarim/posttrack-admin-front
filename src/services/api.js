@@ -101,9 +101,16 @@ export const deprovisionClient = (slug) =>
 
 
 export const adminListPosts = (params = {}) => {
-    const qs = new URLSearchParams(params).toString();
+    const sp = new URLSearchParams();
+    if (params.limit != null) sp.set("limit", String(params.limit));
+    if (params.offset != null) sp.set("offset", String(params.offset));
+    if (params.q) sp.set("q", params.q);                 // только если непустой
+    if (params.category) sp.set("category", params.category); // только если непустой
+    if (params.status) sp.set("status", params.status);
+    const qs = sp.toString();
     return apiFetch(`/blog/admin/list${qs ? `?${qs}` : ""}`);
 };
+
 
 export const getBlogPost = (slug) => apiFetch(`/blog/${slug}`);
 
