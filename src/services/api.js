@@ -115,3 +115,30 @@ export const adminUpdatePost = (id, payload) =>
 
 export const adminDeletePost = (id) =>
     apiFetch(`/blog/${id}`, { method: "DELETE" });
+
+export const uploadMedia = async (file, alt = "") => {
+    const form = new FormData();
+    form.append("file", file);
+    if (alt) form.append("alt", alt);
+
+    const res = await fetch(`${API_BASE_URL}/media/upload`, {
+        method: "POST",
+        body: form,
+        credentials: "include",
+    });
+
+    if (!res.ok) {
+        let msg = "Upload failed";
+        try { const data = await res.json(); msg = data?.detail || msg; } catch {}
+        throw new Error(msg);
+    }
+    return res.json();
+};
+
+export const listMedia = (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiFetch(`/media${qs ? `?${qs}` : ""}`);
+};
+
+export const deleteMedia = (id) =>
+    apiFetch(`/media/${id}`, { method: "DELETE" });
