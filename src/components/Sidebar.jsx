@@ -7,7 +7,9 @@ const links = [
     { to: "/payments", label: "Платежи" },
     { to: "/expenses", label: "Расходы" },
     { to: "/lead-requests", label: "Заявки" },
-    { to: "/plans", label: "Тарифы" } // добавлен пункт меню "Тарифы"
+    { to: "/plans", label: "Тарифы" },
+    { to: "/blog", label: "Блог" }
+
 ];
 
 const Sidebar = ({ isOpen, closeSidebar }) => {
