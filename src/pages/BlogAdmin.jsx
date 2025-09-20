@@ -40,8 +40,8 @@ export default function BlogAdmin() {
         const data = await adminListPosts({
             limit: 200,
             offset: 0,
-            q: q || undefined,              // не шлём пустую строку
-            category: cat || undefined,     // не шлём пустую строку
+            q: q || undefined,
+            category: cat || undefined,
         });
         setItems(data.items);
     };

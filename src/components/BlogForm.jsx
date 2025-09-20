@@ -1,34 +1,27 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { uploadMedia, listMedia } from "../services/api";
+import { mediaUrl } from "../config";
 
 function slugify(input) {
     const map = {
         а:"a",б:"b",в:"v",г:"g",д:"d",е:"e",ё:"e",ж:"zh",з:"z",и:"i",й:"i",
         к:"k",л:"l",м:"m",н:"n",о:"o",п:"p",р:"r",с:"s",т:"t",у:"u",ф:"f",
-        х:"h",ц:"ts",ч:"ch",ш:"sh",щ:"sch",ы:"y",э:"e",ю:"yu",я:"ya",
-        ъ:"",ь:""
+        х:"h",ц:"ts",ч:"ch",ш:"sh",щ:"sch",ы:"y",э:"e",ю:"yu",я:"ya", ъ:"",ь:""
     };
     return (input || "")
-        .toString()
-        .trim()
-        .toLowerCase()
-        .split("")
-        .map(ch => map[ch] ?? ch)
-        .join("")
+        .toString().trim().toLowerCase().split("")
+        .map(ch => map[ch] ?? ch).join("")
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "")
         .slice(0, 180);
 }
 
-// Простая оценка времени чтения
 function readingTime(text) {
     const words = (text || "").trim().split(/\s+/).filter(Boolean).length;
     const minutes = Math.max(1, Math.round(words / 200));
     return { words, minutes };
 }
 
-// Лёгкий Markdown-превью без зависимостей (минимум: заголовки, жирный, курсив, код-блоки, ссылки)
-// Для production лучше подключить ваш рендер с сервера. Здесь — предпросмотр в админке.
 function renderMarkdown(md) {
     let html = (md || "")
         .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -48,13 +41,11 @@ function renderMarkdown(md) {
 }
 
 const TABS = ["Контент", "SEO", "Медиа", "Настройки"];
-
 const CATEGORIES = [
     { value: "cases", label: "Кейсы" },
     { value: "guides", label: "Гайды" },
     { value: "news",  label: "Новости" },
 ];
-
 const STATUSES = [
     { value: "draft", label: "Черновик" },
     { value: "published", label: "Опубликовано" },
@@ -81,7 +72,6 @@ export default function BlogForm({ initial = null, onCancel, onSave }) {
         published_at: initial?.published_at ? initial.published_at.slice(0,16) : "",
     }));
 
-    // авто-генерация slug при изменении title, если slug не трогали руками
     useEffect(() => {
         if (!slugTouchedRef.current) {
             setForm((s) => ({ ...s, slug: slugify(s.title) }));
@@ -139,7 +129,6 @@ export default function BlogForm({ initial = null, onCancel, onSave }) {
 
     return (
         <form onSubmit={submit} className="space-y-5">
-            {/* Tabs */}
             <div className="flex gap-2 flex-wrap">
                 {TABS.map((t) => {
                     const active = tab === t;
@@ -161,7 +150,6 @@ export default function BlogForm({ initial = null, onCancel, onSave }) {
                 })}
             </div>
 
-            {/* Контент */}
             {tab === "Контент" && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                     <div className="space-y-4">
@@ -234,7 +222,6 @@ export default function BlogForm({ initial = null, onCancel, onSave }) {
                         </div>
                     </div>
 
-                    {/* Preview */}
                     <div className="bg-gray-950 border border-gray-800 rounded p-4 overflow-auto">
                         <div className="text-sm text-gray-400 mb-3">Предпросмотр</div>
                         <article
@@ -245,7 +232,6 @@ export default function BlogForm({ initial = null, onCancel, onSave }) {
                 </div>
             )}
 
-            {/* SEO */}
             {tab === "SEO" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <label className="block">
@@ -283,15 +269,14 @@ export default function BlogForm({ initial = null, onCancel, onSave }) {
                         </div>
                         {form.hero_url && (
                             <div className="mt-3">
-                                <img src={form.hero_url} alt="" className="max-h-36 rounded border border-gray-700" />
-                                <div className="text-xs text-gray-400 mt-1">{form.hero_url}</div>
+                                <img src={mediaUrl(form.hero_url)} alt="" className="max-h-36 rounded border border-gray-700" />
+                                <div className="text-xs text-gray-400 mt-1">{mediaUrl(form.hero_url)}</div>
                             </div>
                         )}
                     </div>
                 </div>
             )}
 
-            {/* Медиа — откроется модалкой с галереей ниже */}
             {tab === "Медиа" && (
                 <div className="text-gray-400">
                     Откройте «Медиа», чтобы выбрать/загрузить изображение и вставить в Markdown или указать как Hero.
@@ -307,7 +292,6 @@ export default function BlogForm({ initial = null, onCancel, onSave }) {
                 </div>
             )}
 
-            {/* Настройки */}
             {tab === "Настройки" && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <label className="block">
@@ -349,7 +333,6 @@ export default function BlogForm({ initial = null, onCancel, onSave }) {
                 </div>
             )}
 
-            {/* Кнопки */}
             <div className="flex justify-end gap-3 pt-2">
                 <button type="button" onClick={onCancel} className="px-4 py-2 rounded bg-gray-800 hover:bg-gray-700 border border-gray-700">
                     Отмена
@@ -359,12 +342,10 @@ export default function BlogForm({ initial = null, onCancel, onSave }) {
                 </button>
             </div>
 
-            {/* Медиа-пикер */}
             {mediaOpen && (
                 <MediaPicker
                     onClose={() => setMediaOpen(false)}
                     onChooseUrl={(url) => {
-                        // Если открыт таб SEO — поставим как hero
                         if (tab === "SEO") {
                             setForm((s) => ({ ...s, hero_url: url }));
                         } else {
@@ -379,7 +360,6 @@ export default function BlogForm({ initial = null, onCancel, onSave }) {
     );
 }
 
-// ======== Медиа-галерея (простая) ========
 function MediaPicker({ onClose, onChooseUrl, onUploadFile }) {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
