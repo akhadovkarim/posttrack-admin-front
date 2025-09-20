@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-    getBlogPosts,
+    adminListPosts,
     adminCreatePost,
     adminUpdatePost,
     adminDeletePost,
@@ -35,22 +35,14 @@ export default function BlogAdmin() {
 
     const [q, setQ] = useState("");
     const [cat, setCat] = useState("");
-    // ВНИМАНИЕ: публичный /api/blog отдаёт только published.
-    // Когда добавите админский листинг — подставьте тут state и запрос.
-    const [status] = useState("published");
 
     const load = async () => {
-        const params = { limit: 200, offset: 0 };
-        if (cat) params.category = cat;
-        if (q) params.q = q;
-        const data = await getBlogPosts(params);
-        setItems(data);
+        const data = await adminListPosts({ limit: 200, offset: 0, q, category: cat }); // можно status: 'draft' и т.п.
+        setItems(data.items);
     };
-
-    useEffect(() => { load(); }, []); // initial
+    useEffect(() => { load(); }, []);
 
     const filtered = useMemo(() => {
-        // Локальный поиск по заголовку/описанию, если бек не поддержал q
         const f = (q || "").trim().toLowerCase();
         if (!f) return items;
         return items.filter(

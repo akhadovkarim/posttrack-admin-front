@@ -100,9 +100,9 @@ export const deprovisionClient = (slug) =>
     apiFetch(`/clients/${slug}/deprovision`, { method: "POST" });
 
 
-export const getBlogPosts = (params = {}) => {
+export const adminListPosts = (params = {}) => {
     const qs = new URLSearchParams(params).toString();
-    return apiFetch(`/blog${qs ? `?${qs}` : ""}`);
+    return apiFetch(`/blog/admin/list${qs ? `?${qs}` : ""}`);
 };
 
 export const getBlogPost = (slug) => apiFetch(`/blog/${slug}`);
